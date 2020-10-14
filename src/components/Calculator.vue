@@ -79,7 +79,7 @@
                       <strong> Tier 2 | (25-40) </strong>
                     </th>
                       <td>$70</td>
-                      <td>$2,250</td>
+                      <td>$2,320</td>
                       <!-- <td>{{actual.earnings.t2}}</td> -->
                   </tr>
                   <tr class="t3">
@@ -87,7 +87,7 @@
                       <strong> Tier 3 | (41-56) </strong>
                     </th>
                       <td>$90</td>
-                      <td>$3,600</td>
+                      <td>$3,760</td>
                       <!-- <td>{{actual.earnings.t3}}</td> -->
                   </tr>
                   <tr class="t4">
@@ -222,6 +222,9 @@
   import Goal from './Goal'
   import Navbar from './Navbar'
 
+  // change name of cycle
+  // delete cycle
+
 
   export default {
     name: 'Calculator',
@@ -328,31 +331,57 @@
         }
           // Earnings
         const earnings = (cycle) => {
-          let all = Number(cycle.cycle_total), earned = 0, t1 = 1200, t2 = 1050, t3 = 1350, t4, diff
+          let all = Number(cycle.cycle_total), earned = 0, t1 = 1200, t2 = 2320, t3 = 3760
 
-          switch(all) {
-            // Tier 2
-            case ((all > 24) && (all < 41)):
-                  earned += t1
-                  diff = (all - 24 ) * 70
-                  earned += diff
-              break;
-              // Tier 3
-              case ((all > 40) && (all < 57)):
-                  earned += t1 + t2
-                  diff = (all - 40) * 90
-                  earned += diff
-              break;
-              // Tier 4
-              case (all > 56):
-                  earned += t1 + t2 + t3
-                  diff = (all - 56) * 125
-                  earned += diff
-                break;
-            default:
-                  // All sales default to Tier 1 at first:
+          if ((all > 24) && (all < 41)) {
+            let diff_2
+                earned += t1
+                diff_2 = (all - 24 ) * 70
+                earned += diff_2
+          }
+          else if ((all > 40) && (all < 57)) {
+            let diff_3
+              earned += t2
+              diff_3 = (all - 40) * 90
+              earned += diff_3
+          }
+          else if (all > 56) {
+            let diff_4
+              earned += t3
+              diff_4 = (all - 56) * 125
+              earned += diff_4
+          } else {
               earned += (all * 50)
           }
+
+          // switch(all) {
+          //   // Tier 2
+          //   case ((all > 24) && (all < 41)):
+          //     let diff_2
+          //         earned += t1
+          //         diff_2 = (all - 24 ) * 70
+          //         console.log(diff)
+          //         earned += diff_2
+          //     break;
+          //     // Tier 3
+          //     case ((all > 40) && (all < 57)):
+          //       let diff_3
+          //         earned += ( t1 + t2 )
+          //         diff_3 = (all - 40) * 90
+          //         earned += diff_3
+          //     break;
+          //     // Tier 4
+          //     case (all > 56):
+          //       let diff_4
+          //         earned += ( t1 + t2 + t3 )
+          //         diff_4 = (all - 56) * 125
+          //         earned += diff_4
+          //       break;
+          //   default:
+          //         // All sales default to Tier 1 at first:
+          //     earned += (all * 50)
+          // }
+
           return earned
         }
           // Tier

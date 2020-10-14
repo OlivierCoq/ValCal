@@ -19,7 +19,9 @@
       </small>
     </div>
     <div class="ctr-feedback">
-
+      <div v-if="error" class="alert alert-warning">
+        {{error}}
+      </div>
     </div>
   </div>
 </template>
@@ -62,7 +64,8 @@
               thisObj.uid = user.user.uid
               thisObj.oseeyoPush()
           }, err => {
-            console.log(err.message)
+             // console.log(err.message)
+            this.error = err.message
           })
 
       },
