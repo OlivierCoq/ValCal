@@ -1,0 +1,8 @@
+.new_cycle {
+  box-shadow: $shadow;
+  padding: 2em;
+
+  .cancel {
+    &:hover {cursor: pointer;}
+  }
+}

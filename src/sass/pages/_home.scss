@@ -1,0 +1,165 @@
+#ValCal {
+  .t1 {background: #D9EAD3; color: #262626 !important;}
+  .t2 {background: #B6D7A7; color: #262626 !important;}
+  .t3 {background: #93C47C; color: #262626 !important;}
+  .t4 {background: #6AA84F; color: white;}
+
+  .title {
+    padding: 8em 0 4em;
+
+    h1 {
+      font-size: 3.5em;
+      span {
+        color: $primary-green;
+      }
+    }
+    em {color: $gray-3; font-weight: 200;}
+
+    .goal {
+      box-shadow: $shadow !important;
+      padding: 2em 1.5em  !important;
+    }
+
+    .goals {
+      color: black !important;
+    }
+    h3 {margin: 1em 0;}
+
+    .goal-progress {
+      margin: 2em 0;
+
+    }
+  }
+
+  .goals {
+    margin: 0 0 4em 0;
+
+    .new-goal-btn {
+      background: $primary-green;
+      border-radius: 2em;
+      color: white;
+      margin: 0 1em;
+      box-shadow: $shadow;
+
+      &:hover {background: $pg-hover;}
+    }
+
+    .new_goal {
+      padding: 2em;
+      box-shadow: $shadow;
+      margin: 2em 0;
+
+      .cancel{&:hover{cursor: pointer}}
+
+      form {width: 100% !important;}
+    }
+    .ctr-goals {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: flex-start;
+      margin: 1em 0;
+    }
+
+    .all_goals {
+      .goal {
+        margin: 2em 0;
+        padding: 2em;
+        box-shadow: $shadow;
+
+        .goal-progress {
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          height: 7em;
+        }
+      }
+    }
+  }
+
+  .tiers {
+    table {
+      box-shadow: $shadow;
+    }
+}
+  .cycles {
+    h2 { margin: 0 0 .5em 0;}
+    h4 {margin: 1em;}
+
+    .cycle {
+      width: 100%;
+
+      .blurb {
+        h4 {
+          .current_tier {
+            height: .5rem;
+            width: .5rem;
+            border-radius: 1em;
+            padding: 0.4em 1em;
+            color: white;
+            box-shadow: $shadow;
+          }
+        }
+      }
+    }
+
+    table {
+      box-shadow: $shadow;
+
+
+      .sub_head {font-weight: 400;}
+      .total {font-weight: 300;}
+      input {
+        max-width: 6em;
+        border: none;
+        border-bottom: 1px solid $gray-1;
+        padding: 0.5em;
+      }
+      thead {
+        tr {
+          td {
+            strong {color: $primary-blue !important;}
+          }
+        }
+      }
+      tbody {
+        tr {
+          td {
+            &:hover { cursor: pointer; }
+          }
+        }
+      }
+    }
+  }
+
+  .editing {
+    box-shadow: $shadow;
+    padding: 1em;
+    position: sticky;
+  }
+
+  .saveChanges {
+    .save-btn {
+      background: $primary-green;
+      right: 1em;
+      bottom: 1em;
+      box-shadow: $shadow
+
+      &:hover {background: $pg-hover;}
+    }
+
+    .clone-btn {
+      right: 1em;
+      bottom: 4em;
+    }
+
+    .clone-btn,
+    .save-btn {
+      float: right !important;
+      border-radius: 2em;
+      position: fixed;
+      color: white;
+      box-shadow: $shadow
+    }
+  }
+}

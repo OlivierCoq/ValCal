@@ -1,0 +1,24 @@
+#Navbar {
+  height: 65px;
+  border: 0;
+  border-bottom: 1px solid $gray-1;
+  box-shadow: $shadow;
+  position: fixed;
+  z-index: 9999;
+  background: white;
+
+  .ctr-user_info {
+    font-family: $main-font;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    justify-content: center;
+    height: 65px;
+    text-align: right;
+    padding: 1em;
+
+    .logout {
+      &:hover {cursor: pointer;}
+    }
+  }
+}
