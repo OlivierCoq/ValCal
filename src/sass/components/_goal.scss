@@ -1,0 +1,63 @@
+.goals {
+  margin: 0 0 4em 0;
+
+  .new-goal-btn {
+    background: $primary-green;
+    border-radius: 2em;
+    color: white;
+    margin: 0 1em;
+    box-shadow: $shadow;
+
+    &:hover {background: $pg-hover;}
+  }
+
+  .new_goal {
+    padding: 2em;
+    box-shadow: $shadow;
+    margin: 2em 0;
+
+    .cancel{&:hover{cursor: pointer}}
+
+    form {width: 100% !important;}
+  }
+  .ctr-goals {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+    margin: 1em 0;
+  }
+
+  .all_goals {
+    .goal {
+      margin: 2em 0;
+      padding: 2em;
+      box-shadow: $shadow;
+
+      .edit-goal-btn {
+
+        right: 1em;
+        bottom: 1em;
+        box-shadow: $shadow;
+        border-radius: 2em;
+        padding: .6em .9em;
+        margin: -0.5em 1em 0 1em;
+        color: white;
+
+
+
+      }
+      .edit-goal-btn {
+        background:$primary-blue;
+        &:hover { background: $pb-hover; }
+      }
+
+      .goal-progress {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        height: 7em;
+      }
+    }
+  }
+}

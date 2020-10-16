@@ -2,7 +2,7 @@
   <div id="Navbar" class="container-fluid">
     <div class="row">
       <div class="col-10"></div>
-      <div class="col-2">
+      <div class="col-xs-12 col-sm-12 col-md-12 col-lg-2 col-xl-2">
         <div class="ctr-user_info">
           <span><strong>Logged in <i class="fas fa-caret-right"></i></strong> {{email}}</span>
           <span class="logout" @click="logout"><strong>Logout <i class="fas fa-sign-out-alt"></i></strong></span>

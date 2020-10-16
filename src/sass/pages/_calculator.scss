@@ -4,6 +4,10 @@
   .t3 {background: #93C47C; color: #262626 !important;}
   .t4 {background: #6AA84F; color: white;}
 
+  .ctr-body {
+    background-color: white;
+    padding: 3em;
+  }
   .title {
     padding: 8em 0 4em;
 
@@ -15,14 +19,6 @@
     }
     em {color: $gray-3; font-weight: 200;}
 
-    .goal {
-      box-shadow: $shadow !important;
-      padding: 2em 1.5em  !important;
-    }
-
-    .goals {
-      color: black !important;
-    }
     h3 {margin: 1em 0;}
 
     .goal-progress {
@@ -31,51 +27,7 @@
     }
   }
 
-  .goals {
-    margin: 0 0 4em 0;
-
-    .new-goal-btn {
-      background: $primary-green;
-      border-radius: 2em;
-      color: white;
-      margin: 0 1em;
-      box-shadow: $shadow;
-
-      &:hover {background: $pg-hover;}
-    }
-
-    .new_goal {
-      padding: 2em;
-      box-shadow: $shadow;
-      margin: 2em 0;
-
-      .cancel{&:hover{cursor: pointer}}
-
-      form {width: 100% !important;}
-    }
-    .ctr-goals {
-      display: flex;
-      flex-direction: row;
-      align-items: center;
-      justify-content: flex-start;
-      margin: 1em 0;
-    }
-
-    .all_goals {
-      .goal {
-        margin: 2em 0;
-        padding: 2em;
-        box-shadow: $shadow;
-
-        .goal-progress {
-          display: flex;
-          flex-direction: column;
-          justify-content: center;
-          height: 7em;
-        }
-      }
-    }
-  }
+  
 
   .tiers {
     table {
@@ -83,29 +35,97 @@
     }
 }
   .cycles {
+    margin: 1em 0 1em 0;
+
     h2 { margin: 0 0 .5em 0;}
-    h4 {margin: 1em;}
+    h4 {margin: .2em .5em;}
 
     .cycle {
       width: 100%;
+      margin: 2em 0;
 
       .blurb {
-        h4 {
+
+
+        .ctr-user_edit {
           .current_tier {
             height: .5rem;
             width: .5rem;
-            border-radius: 1em;
-            padding: 0.4em 1em;
+            border-radius: 2em;
+            padding: 1em 2em;
             color: white;
             box-shadow: $shadow;
           }
+
         }
+      }
+
+      .delete-modal,
+      .edit-cycle {
+        min-height: 1em;
+        margin: 1em 0;
+        padding: 3em 1em;
+        box-shadow: $shadow;
+
+        .delete-modal {
+          width: 50%;
+          margin: 0 auto;
+          position: fixed;
+          bottom: 50%;
+          background: white;
+          z-index: 99999;
+
+          .ctr-actions {
+            .delete-final-btn,
+            .delete-cancel-btn {
+              right: 1em;
+              bottom: 1em;
+              box-shadow: $shadow;
+              border-radius: 2em;
+              padding: .6em .9em;
+              margin: -0.5em 1em 0 1em;
+              color: white;
+            }
+
+            .delete-final-btn {
+              background:red;
+              &:hover { background: darkred; }
+            }
+            .delete-cancel-btn {
+              background:$gray-2;
+              &:hover { background: $gray-3; }
+            }
+          }
+        }
+      }
+
+      .delete-btn,
+      .edit-btn {
+
+        right: 1em;
+        bottom: 1em;
+        box-shadow: $shadow;
+        border-radius: 2em;
+        padding: .6em .9em;
+        margin: -0.5em 1em 0 1em;
+        color: white;
+
+
+
+      }
+      .edit-btn {
+        background:$primary-blue;
+        &:hover { background: $pb-hover; }
+      }
+      .delete-btn {
+        background:red;
+        &:hover { background: darkred; }
       }
     }
 
     table {
       box-shadow: $shadow;
-
+      margin: 1em 0;
 
       .sub_head {font-weight: 400;}
       .total {font-weight: 300;}
@@ -143,7 +163,7 @@
       background: $primary-green;
       right: 1em;
       bottom: 1em;
-      box-shadow: $shadow
+      box-shadow: $shadow;
 
       &:hover {background: $pg-hover;}
     }
@@ -151,6 +171,9 @@
     .clone-btn {
       right: 1em;
       bottom: 4em;
+      background: $primary-blue;
+
+      &:hover{background: $pb-hover;}
     }
 
     .clone-btn,

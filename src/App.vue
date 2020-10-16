@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <div class="container-fluid" style="padding: 0 !important;">
+    <div class="container-fluid" style="padding: 0 !important; background: #EBECEF;">
       <router-view/>
     </div>
   </div>

@@ -67,7 +67,6 @@
              // console.log(err.message)
             this.error = err.message
           })
-
       },
       oseeyoPush(){
         let newUserObj = {

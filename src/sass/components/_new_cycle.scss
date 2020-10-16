@@ -1,6 +1,13 @@
 .new_cycle {
+  width: 50%;
+  margin: 0 auto;
+  margin-left: 3em !important;
+  position: fixed;
+  bottom: 50%;
+  background: white;
+  z-index: 99999;
   box-shadow: $shadow;
-  padding: 2em;
+  padding: 3em;
 
   .cancel {
     &:hover {cursor: pointer;}

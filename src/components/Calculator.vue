@@ -2,7 +2,7 @@
   <div>
     <Navbar></Navbar>
     <div id="ValCal">
-      <div class="container">
+      <div class="container ctr-body">
         <div class="row title">
           <div class="col-12">
             <h1><span>Val</span>Cal</h1>
@@ -10,13 +10,14 @@
             <hr>
           </div>
         </div>
+
         <div class="row goals">
           <div class="col-12">
             <h3><i class="fas fa-caret-right"></i> Goals :</h3>
             <div class="row">
               <div class="col-12">
                 <div class="ctr-goals">
-                  <span v-if="goals.length < 1">You have no saved goals. Let's get started by adding a goal!</span>
+                  <span v-if="goals && goals.length < 1 && !editing && !deleting">You have no saved goals. Let's get started by adding a goal!</span>
                   <button class="btn btn-lg new-goal-btn" @click="createGoal"><i class="fas fa-plus"></i> Add New Goal</button>
                 </div>
               </div>
@@ -47,6 +48,9 @@
             </div>
             <div class="row all_goals">
               <div class="col-12">
+                <div v-if="!goals" class="spinner-border" role="status">
+                  <span class="sr-only">Loading...</span>
+                </div>
                 <Goal v-for="(goal, i) in goals" :key="i" :goal="goal" :dataset="cycles"></Goal> <!-- Sending total as metric -->
               </div>
             </div>
@@ -62,7 +66,6 @@
                     <th scope="col"><strong>Tier</strong></th>
                     <th scope="col"><strong>Bonus per Sale</strong></th>
                     <th scope="col"><strong>Max earnings per Tier</strong></th>
-                    <!-- <th scope="col">Actual Earnings</th> -->
                   </tr>
                 </thead>
                 <tbody>
@@ -72,7 +75,6 @@
                     </th>
                       <td>$50</td>
                       <td>$1,200</td>
-                      <!-- <td>{{actual.earnings.t1}}</td> -->
                   </tr>
                   <tr class="t2">
                     <th scope="row">
@@ -80,7 +82,6 @@
                     </th>
                       <td>$70</td>
                       <td>$2,320</td>
-                      <!-- <td>{{actual.earnings.t2}}</td> -->
                   </tr>
                   <tr class="t3">
                     <th scope="row">
@@ -88,7 +89,6 @@
                     </th>
                       <td>$90</td>
                       <td>$3,760</td>
-                      <!-- <td>{{actual.earnings.t3}}</td> -->
                   </tr>
                   <tr class="t4">
                     <th scope="row">
@@ -96,16 +96,16 @@
                     </th>
                       <td>$125</td>
                       <td><i class="fas fa-infinity"></i></td>
-                      <!-- <td>{{actual.earnings.t4}}</td> -->
                   </tr>
                 </tbody>
               </table>
           </div>
         </div>
-        <hr>
+
         <div class="row cycles">
           <h2><i class="fas fa-caret-right"></i> Cycles</h2>
         </div>
+        <hr>
         <div class="row">
           <div class="col-12">
             <span v-if="cycles.length < 1">You have no saved cycles. Click the red "Create Cycle" button to get started. <i class="fas fa-caret-right"></i></span>
@@ -126,17 +126,59 @@
           </div>
         </div>
 
-        <div class="row cycles">
+        <div v-if="!cycles" class="spinner-border" role="status">
+          <span class="sr-only">Loading...</span>
+        </div>
+
+        <div v-if="cycles" class="row cycles">
           <div class="cycle" v-for="(cycle, i) in cycles" :key="i">
-            <div class="blurb">
-              <h4>&nbsp; {{cycle.title}} &nbsp;
-                <span class="current_tier t1">
-                  {{cycle.current_tier}}
-                </span>
-              </h4>
+            <div class="row blurb">
+              <h4>{{cycle.title}}</h4>
+              <div class="col-xs-12 col-md-8">
+                <div class="ctr-user_edit">
+                  <span class="current_tier t1">
+                    {{cycle.current_tier}}
+                  </span>
+                  <button class="btn edit-btn" @click="cycle.editing = !cycle.editing"  data-toggle="tooltip" data-placement="top" title="Edit Sales Cycle"><i class="fas fa-pen"></i></button>
+                </div>
+              </div>
+              <div class="col-xs-12 col-md-6"></div>
             </div>
-              <hr>
-              <table class="table">
+
+              <!-- Editing Cycle: -->
+            <div v-if="cycle.editing" class="row edit-cycle">
+              <div class="col-md-12">
+                <form>
+                  <div class="form-group row">
+                    <label class="col-sm-12 col-md-2 col-form-label"><strong>Edit Title</strong></label>
+                    <div class="col-sm-12 col-md-8">
+                      <input class="form-control" type="text" v-model="cycle.title">
+                    </div>
+                    <div class="col-sm-12 col-md-2">
+                      <button class="btn delete-btn" @click="deleting = true"><i class="fas fa-trash"></i></button>
+                    </div>
+                  </div>
+                </form>
+              </div>
+              <div v-if="deleting" class="delete-modal">
+                <div class="row">
+                  <div class="col-12">
+                    <form class="row">
+                      <label class="col-sm-12 col-md-6 col-form-label"><span>Are you sure you want to delete this cycle? This <strong>cannot</strong> be undone.</span></label>
+                      <div class="col-sm-12 col-md-6">
+                        <div class="ctr-actions">
+                          <button class="btn delete-final-btn" @click="deleteCycle(cycle)">Yes, delete it please.</button>
+                          <button class="btn delete-cancel-btn" @click="deleting = false">Nope, nevermind!</button>
+                        </div>
+                      </div>
+                    </form>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <hr>
+                <!-- Cycle Table: -->
+            <table class="table table-responsive">
                 <thead class="thead-success">
                   <tr>
                     <th></th>
@@ -204,7 +246,7 @@
         <div class="row saveChanges">
           <div class="col-6 offset-6">
             <button class="btn btn-lg save-btn" @click="saveChanges"><i class="fas fa-check"></i> {{saving}}</button>
-            <button class="btn btn-lg btn-danger clone-btn" @click="createCycle"><i class="fas fa-plus"></i> Create Cycle</button>
+            <button class="btn btn-lg clone-btn" @click="createCycle"><i class="fas fa-plus"></i> Create Cycle</button>
           </div>
         </div>
       </div>
@@ -224,6 +266,7 @@
 
   // change name of cycle
   // delete cycle
+  //
 
 
   export default {
@@ -238,18 +281,19 @@
         saving: "Save Changes",
         editing: false,
         edit: false,
-        actual: {
-          earnings: {
-            t1: 0,
-            t2: 0,
-            t3: 0,
-            t4: 0
-          }
-        },
-        cycles: [],
+        // actual: {
+        //   earnings: {
+        //     t1: 0,
+        //     t2: 0,
+        //     t3: 0,
+        //     t4: 0
+        //   }
+        // },
+        cycles: false,
         goals: [],
         new_cycle: false,
         new_goal: false,
+        deleting: false,
           //User Data:
         uid: "",
         email: ""
@@ -268,6 +312,7 @@
       } else { console.log("No user") }
       // this.getCycles()
       // this.getGoals()
+      this.initTooltips()
     },
     methods: {
       getUserData(){
@@ -286,6 +331,7 @@
       },
       getCycles(){
         let thisObj = this
+        thisObj.cycles = []
         // let cycles = OseeyoFireBase.OseeyoGet("cycles","uid",thisObj.uid)
         // console.log("your cycles", cycles)
         db.collection("cycles").where("uid", '==', thisObj.uid).get().then((querySnapshot) => {
@@ -297,6 +343,7 @@
       },
       getGoals(){
         let thisObj = this
+        thisObj.goals = []
         db.collection("goals").where("uid", '==', thisObj.uid).get().then((querySnapshot) => {
           // Add each project to dataset:
           querySnapshot.forEach((doc) => {
@@ -308,6 +355,35 @@
         this.editing = true
         this.edit = obj
         console.log("editing:", this.editing)
+      },
+      initTooltips(){
+        $('[data-toggle="tooltip"]').tooltip()
+      },
+      deleteCycle(cycle){
+        console.log("Deleting:", cycle.title)
+        let thisObj = this
+        db.collection("cycles").where('id', '==', cycle.id).get().then((querySnapshot) => {
+            querySnapshot.forEach((doc) => {
+              doc.ref.delete()
+              thisObj.cycles = false
+              thisObj.getCycles()
+              thisObj.deleting = false
+            })
+          })
+      },
+      deleteGoal(goal){
+        console.log("Deleting:", goal.name)
+        let thisObj = this
+        thisObj.editing = true
+        db.collection("goals").where('id', '==', goal.id).get().then((querySnapshot) => {
+            querySnapshot.forEach((doc) => {
+              doc.ref.delete()
+              thisObj.goals = false
+              thisObj.getGoals()
+              thisObj.deleting = false
+              thisObj.editing = false
+            })
+          })
       },
       saveChanges(){
         this.saving = "Saved!"
@@ -414,28 +490,33 @@
           return tier
         }
 
-
+      // Actions
         this.cycles.forEach((cycle) => {
           cycle.week_1_total = week_total(cycle.week_1)
           cycle.week_2_total = week_total(cycle.week_2)
           cycle.cycle_total = cycle_total(cycle)
           cycle.earnings.total = earnings(cycle)
           cycle.current_tier = getTier(cycle.cycle_total)
+          cycle.editing = false
         })
-        // getTotal()
+
         //  Update data in FireBase:
           this.cycles.forEach((cycle) => { this.sendToFireBase(cycle, "cycles") })
+          this.goals.forEach((goal) => {
+            this.sendToFireBase(goal, "goals")
+            goal.editing = false
+          })
           if(thisObj.new_cycle && (thisObj.new_cycle.title !== "")){
             OseeyoFireBase.OsseeyoFirePush("cycles", thisObj.new_cycle)
             thisObj.new_cycle = !thisObj.new_cycle
-            thisObj.cycles = []
+            thisObj.cycles = false
             this.getCycles()
             thisObj.saving = "Save Changes"
           }
           if(thisObj.new_goal && (thisObj.new_goal.name !== "")){
             OseeyoFireBase.OsseeyoFirePush("goals", thisObj.new_goal)
             thisObj.new_goal = !thisObj.new_goal
-            thisObj.goals = []
+            thisObj.goals = false
             this.getGoals()
             thisObj.saving = "Save Changes"
           }
@@ -445,6 +526,7 @@
         // OseeyoFireBase.OseeyoUpdate("jv-members", "uid", thisObj.uid, newUserObj)
         OseeyoFireBase.OseeyoUpdate(collection, "id", obj.id, obj)
         thisObj.saving = "Save Changes"
+        // thisObj.getGoals()
       },
       cloneWeek(){
         this.edit = this.cycles[0]
