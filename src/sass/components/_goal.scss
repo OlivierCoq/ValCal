@@ -34,6 +34,7 @@
       padding: 2em;
       box-shadow: $shadow;
 
+      .delete-goal-btn,
       .edit-goal-btn {
 
         right: 1em;
@@ -52,6 +53,11 @@
         &:hover { background: $pb-hover; }
       }
 
+      .delete-goal-btn {
+        background:red;
+        &:hover { background: darkred; }
+      }
+
       .goal-progress {
         display: flex;
         flex-direction: column;
@@ -60,4 +66,48 @@
       }
     }
   }
+}
+
+
+
+.delete-goal-modal {
+  width: 50%;
+  margin: 0 auto;
+  position: fixed;
+  bottom: 50%;
+  background: white;
+  z-index: 99999;
+  min-height: 1em;
+  margin: 1em 0;
+  padding: 3em 1em;
+  box-shadow: $shadow;
+
+  .ctr-actions {
+    .delete-final-btn,
+    .delete-cancel-btn {
+      right: 1em;
+      bottom: 1em;
+      box-shadow: $shadow;
+      border-radius: 2em;
+      padding: .6em .9em;
+      margin: -0.5em 1em 0 1em;
+      color: white;
+
+      &:hover {cursor: pointer;}
+    }
+
+    .delete-final-btn {
+      background:red;
+      &:hover { background: darkred; }
+    }
+    .delete-cancel-btn {
+      background:$gray-2;
+      &:hover { background: $gray-3; }
+    }
+  }
+}
+
+.deleted {
+  display: none !important;
+  background: #9e9e9e4f !important;
 }

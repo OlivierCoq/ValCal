@@ -13,7 +13,7 @@
 
         <div class="row goals">
           <div class="col-12">
-            <h3><i class="fas fa-caret-right"></i> Goals :</h3>
+            <h3><i class="fas fa-caret-right"></i> Goals (BETA):</h3>
             <div class="row">
               <div class="col-12">
                 <div class="ctr-goals">
@@ -22,6 +22,7 @@
                 </div>
               </div>
             </div>
+              <!-- New Goal modal -->
             <div v-if="new_goal" class="row new_goal">
               <div class="col-12">
                 <div class="row">
@@ -46,16 +47,86 @@
                 </div>
               </div>
             </div>
+              <!-- All Goals loop -->
             <div class="row all_goals">
               <div class="col-12">
                 <div v-if="!goals" class="spinner-border" role="status">
                   <span class="sr-only">Loading...</span>
                 </div>
-                <Goal v-for="(goal, i) in goals" :key="i" :goal="goal" :dataset="cycles"></Goal> <!-- Sending total as metric -->
+
+                    <!-- Individual Goal: -->
+                <div v-for="(goal, i) in goals" :key="i" class="goal" :class=" deleted ? 'deleted' : '' " >
+                  <div class="row">
+                    <div class="col-12" style="display: flex; flex-direction: row;">
+                      <h4>{{goal.name}}</h4>
+                      <button class="btn edit-goal-btn" :class=" deleted ? 'deleted' : '' " :disabled="deleted ? true : false" @click="goal.editing = !goal.editing">
+                        <i class="fas fa-pen"></i>
+                      </button>
+                      <button class="btn delete-goal-btn" :class=" deleted ? 'deleted' : '' " :disabled="deleted ?  true : false" @click="goal.deleting = true">
+                        <i class="fas fa-trash"></i>
+                      </button>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="goal-progress" style="width:100%; padding: 0 1em;">
+                      <div class="progress">
+                        <div class="progress-bar t3" :class=" deleted ? 'deleted' : '' " role="progressbar" :style=" `width: ${prog}%`"></div>
+                      </div>
+                      <span><em>$ {{goal.goal_num}}</em></span>
+                    </div>
+                  </div>
+
+                  <div v-if="goal.editing" class="row edit-goal">
+                    <div class="col-12">
+                      <h5>Edit Goal</h5> <hr><br>
+                    </div>
+
+                    <div class="col-12">
+                      <form>
+                        <div class="form-group row">
+                          <label class="col-sm-12 col-md-2 col-form-label">
+                            <strong>Edit Name</strong>
+                          </label>
+                          <div class="col-sm-12 col-md-10">
+                              <input class="form-control" v-model="goal.name">
+                          </div>
+                        </div>
+                        <div class="form-group row">
+                          <label class="col-sm-12 col-md-2 col-form-label">
+                            <strong>Edit Metric</strong><br>
+                            <small><em>(For ex. 1000000000)</em></small>
+                          </label>
+                          <div class="col-sm-12 col-md-10">
+                              <input class="form-control" v-model="goal.goal_num">
+                          </div>
+                        </div>
+                      </form>
+                    </div>
+                  </div>
+
+                  <div v-if="goal.deleting" class="delete-goal-modal">
+                    <div class="row">
+                      <div class="col-12">
+                        <form class="row">
+                          <label class="col-sm-12 col-md-6 col-form-label"><span>Are you sure you want to delete this Goal? This <strong>cannot</strong> be undone.</span></label>
+                          <div class="col-sm-12 col-md-6">
+                            <div class="ctr-actions">
+                              <button class="btn delete-final-btn" @click="deleteGoal(goal)">Yes, delete it please.</button>
+                              <button class="btn delete-cancel-btn" @click="goal.deleting = false">Nope, nevermind!</button>
+                            </div>
+                          </div>
+                        </form>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+
               </div>
             </div>
           </div>
         </div>
+          <!-- Sales Tiers table -->
         <div class="row tiers">
           <div class="col-12">
             <h2><i class="fas fa-caret-right"></i> Sales Tiers</h2>
@@ -101,18 +172,19 @@
               </table>
           </div>
         </div>
-
+          <!-- Cycles Loop: -->
         <div class="row cycles">
           <h2><i class="fas fa-caret-right"></i> Cycles</h2>
         </div>
         <hr>
+
+            <!-- No Saved Cycle default: -->
         <div class="row">
           <div class="col-12">
-            <span v-if="cycles.length < 1">You have no saved cycles. Click the red "Create Cycle" button to get started. <i class="fas fa-caret-right"></i></span>
+            <span v-if="cycles.length < 1">You have no saved cycles. Click the blue "Create Cycle" button to get started. <i class="fas fa-caret-right"></i></span>
           </div>
         </div>
-
-          <!-- Adding a new Cycle: -->
+            <!-- Adding a new Cycle: -->
         <div v-if="new_cycle" class="container new_cycle">
           <div class="row">
             <div class="col-12">
@@ -125,7 +197,7 @@
             </div>
           </div>
         </div>
-
+            <!-- Loading cycles spinner: -->
         <div v-if="!cycles" class="spinner-border" role="status">
           <span class="sr-only">Loading...</span>
         </div>
@@ -139,14 +211,14 @@
                   <span class="current_tier t1">
                     {{cycle.current_tier}}
                   </span>
-                  <button class="btn edit-btn" @click="cycle.editing = !cycle.editing"  data-toggle="tooltip" data-placement="top" title="Edit Sales Cycle"><i class="fas fa-pen"></i></button>
+                  <button class="btn edit-btn" @click="editCycle(cycle)"  data-toggle="tooltip" data-placement="top" title="Edit Sales Cycle"><i class="fas fa-pen"></i></button>
                 </div>
               </div>
               <div class="col-xs-12 col-md-6"></div>
             </div>
 
               <!-- Editing Cycle: -->
-            <div v-if="cycle.editing" class="row edit-cycle">
+            <div v-if="editing || cycle.editing" class="row edit-cycle">
               <div class="col-md-12">
                 <form>
                   <div class="form-group row">
@@ -160,6 +232,7 @@
                   </div>
                 </form>
               </div>
+                <!-- Deleting Cycle: -->
               <div v-if="deleting" class="delete-modal">
                 <div class="row">
                   <div class="col-12">
@@ -261,19 +334,22 @@
   import * as OseeyoFireBase from '../OseeyoFirebase'
   import uuid from 'uuid'
   import {v4 as uuidv4 } from 'uuid'
-  import Goal from './Goal'
+  // import Goal from './Goal'
   import Navbar from './Navbar'
 
-  // change name of cycle
-  // delete cycle
-  //
+
+  /* DEVELOPMENT TO-DO LIST:
+
+    - change name of cycle
+    - delete cycle
+
+  */
 
 
   export default {
     name: 'Calculator',
     components: {
       Navbar,
-      Goal
     },
     data() {
       return {
@@ -281,18 +357,13 @@
         saving: "Save Changes",
         editing: false,
         edit: false,
-        // actual: {
-        //   earnings: {
-        //     t1: 0,
-        //     t2: 0,
-        //     t3: 0,
-        //     t4: 0
-        //   }
-        // },
-        cycles: false,
-        goals: [],
-        new_cycle: false,
+          //Goals
+        goals: false,
         new_goal: false,
+
+          //Cycles
+        cycles: false,
+        new_cycle: false,
         deleting: false,
           //User Data:
         uid: "",
@@ -308,7 +379,7 @@
         thisObj.email = firebase.auth().currentUser.email
         thisObj.getUserData()
         // console.log("Logged in as:", thisObj.uid)
-        // console.log("Logged in as:", firebase.auth().currentUser)
+        console.log("Logged in as:", firebase.auth().currentUser)
       } else { console.log("No user") }
       // this.getCycles()
       // this.getGoals()
@@ -329,9 +400,11 @@
         })
 
       },
+        // Cycle CRUD functions
       getCycles(){
+        this.cycles = []
         let thisObj = this
-        thisObj.cycles = []
+
         // let cycles = OseeyoFireBase.OseeyoGet("cycles","uid",thisObj.uid)
         // console.log("your cycles", cycles)
         db.collection("cycles").where("uid", '==', thisObj.uid).get().then((querySnapshot) => {
@@ -341,6 +414,65 @@
           })
         })
       },
+      createCycle(){
+        let thisObj = this
+        thisObj.new_cycle = {
+          id: uuidv4(),
+          uid: thisObj.uid,
+          title: "",
+          current_tier: "Tier 1",
+          cycle_earnings: "0",
+          cycle_total: "0",
+          earnings: {
+            t1: "0",
+            t2: "0",
+            t3: "0",
+            t4: "0",
+            total: "0",
+          },
+          week_1: {
+            Sunday: "0",
+            Monday: "0",
+            Tuesday: "0",
+            Wednesday: "0",
+            Thursday: "0",
+            Friday: "0",
+            Saturday: "0",
+          },
+          week_1_total: "0",
+          week_2: {
+            Sunday: "0",
+            Monday: "0",
+            Tuesday: "0",
+            Wednesday: "0",
+            Thursday: "0",
+            Friday: "0",
+            Saturday: "0",
+          },
+          week_2_total: "0",
+        }
+      },
+      editCycle(cycle){
+        let thisObj = this
+        thisObj.editing = !thisObj.editing
+        cycle.editing = !cycle.editing
+      },
+      deleteCycle(cycle){
+        console.log("Deleting:", cycle.title)
+        let thisObj = this
+        db.collection("cycles").where('id', '==', cycle.id).get()
+          .then((querySnapshot) => {
+            querySnapshot.forEach((doc) => {
+              doc.ref.delete()
+            })
+          })
+          .then(() => {
+            thisObj.deleting = false
+            thisObj.cycles = false
+          })
+          setTimeout(()=>{thisObj.saveChanges()}, 900)
+      },
+        // Goal CRUD functions
       getGoals(){
         let thisObj = this
         thisObj.goals = []
@@ -351,25 +483,34 @@
           })
         })
       },
-      editObj(obj) {
-        this.editing = true
-        this.edit = obj
-        console.log("editing:", this.editing)
-      },
-      initTooltips(){
-        $('[data-toggle="tooltip"]').tooltip()
-      },
-      deleteCycle(cycle){
-        console.log("Deleting:", cycle.title)
+      createGoal(){
         let thisObj = this
-        db.collection("cycles").where('id', '==', cycle.id).get().then((querySnapshot) => {
-            querySnapshot.forEach((doc) => {
-              doc.ref.delete()
-              thisObj.cycles = false
-              thisObj.getCycles()
-              thisObj.deleting = false
-            })
-          })
+        thisObj.new_goal = {
+          id: uuidv4(),
+          uid: thisObj.uid,
+          name: "",
+          min: 0,
+          prog: 0,
+          goal_num: 0
+        }
+      },
+      progress(goal){
+
+        // goal.goal_num = Number(this.goal.goal_num)
+        // console.log("max", this.goal_num)
+        // console.log("dataset", this.dataset)
+        // console.log("goal", this.goal)
+
+        //Earnings
+        this.dataset.forEach((endpoint) => {
+          this.min += endpoint.earnings.total
+        })
+
+        this.prog = (this.min / this.goal_num) * 100
+        this.goal.prog = this.prog
+        // console.log("progress:", this.prog)
+        OseeyoFireBase.OseeyoUpdate("goals", "id", this.goal.id, this.goal)
+        // this.updateProg()
       },
       deleteGoal(goal){
         console.log("Deleting:", goal.name)
@@ -378,13 +519,23 @@
         db.collection("goals").where('id', '==', goal.id).get().then((querySnapshot) => {
             querySnapshot.forEach((doc) => {
               doc.ref.delete()
-              thisObj.goals = false
-              thisObj.getGoals()
-              thisObj.deleting = false
-              thisObj.editing = false
+
             })
           })
+          goal.deleting = false
+          goal.editing = false
+          thisObj.deleted = true
       },
+
+      editObj(obj) {
+        this.editing = true
+        this.edit = obj
+        console.log("editing:", this.editing)
+      },
+      initTooltips(){
+        $('[data-toggle="tooltip"]').tooltip()
+      },
+
       saveChanges(){
         this.saving = "Saved!"
         let thisObj = this
@@ -490,6 +641,8 @@
           return tier
         }
 
+        if(!thisObj.cycles) thisObj.getCycles()
+
       // Actions
         this.cycles.forEach((cycle) => {
           cycle.week_1_total = week_total(cycle.week_1)
@@ -500,8 +653,13 @@
           cycle.editing = false
         })
 
+        this.goals.forEach((goal) => { this.progress(goal) })
+
         //  Update data in FireBase:
-          this.cycles.forEach((cycle) => { this.sendToFireBase(cycle, "cycles") })
+          this.cycles.forEach((cycle) => {
+            this.sendToFireBase(cycle, "cycles")
+            cycle.editing = false
+          })
           this.goals.forEach((goal) => {
             this.sendToFireBase(goal, "goals")
             goal.editing = false
@@ -517,16 +675,16 @@
             OseeyoFireBase.OsseeyoFirePush("goals", thisObj.new_goal)
             thisObj.new_goal = !thisObj.new_goal
             thisObj.goals = false
-            this.getGoals()
             thisObj.saving = "Save Changes"
+            thisObj.getGoals()
           }
+          thisObj.saving = "Save Changes"
       },
       sendToFireBase(obj, collection){
         let thisObj = this
         // OseeyoFireBase.OseeyoUpdate("jv-members", "uid", thisObj.uid, newUserObj)
         OseeyoFireBase.OseeyoUpdate(collection, "id", obj.id, obj)
-        thisObj.saving = "Save Changes"
-        // thisObj.getGoals()
+
       },
       cloneWeek(){
         this.edit = this.cycles[0]
@@ -536,61 +694,6 @@
         // return false
         OseeyoFireBase.OsseeyoFirePush("cycles", postObj)
       },
-      createCycle(){
-        let thisObj = this
-        thisObj.new_cycle = {
-          id: uuidv4(),
-          uid: thisObj.uid,
-          title: "",
-          current_tier: "Tier 1",
-          cycle_earnings: "0",
-          cycle_total: "0",
-          earnings: {
-            t1: "0",
-            t2: "0",
-            t3: "0",
-            t4: "0",
-            total: "0",
-          },
-          week_1: {
-            Sunday: "0",
-            Monday: "0",
-            Tuesday: "0",
-            Wednesday: "0",
-            Thursday: "0",
-            Friday: "0",
-            Saturday: "0",
-          },
-          week_1_total: "0",
-          week_2: {
-            Sunday: "0",
-            Monday: "0",
-            Tuesday: "0",
-            Wednesday: "0",
-            Thursday: "0",
-            Friday: "0",
-            Saturday: "0",
-          },
-          week_2_total: "0",
-        }
-      },
-      createGoal(){
-        let thisObj = this
-        thisObj.new_goal = {
-          id: uuidv4(),
-          uid: thisObj.uid,
-          name: "",
-          min: 0,
-          prog: 0,
-          goal_num: 0
-        }
-      },
-    },
-    watch(){
-      this.saveChanges()
-    },
-    updated(){
-      // this.getCycles()
     },
   }
 
