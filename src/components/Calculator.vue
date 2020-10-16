@@ -10,7 +10,6 @@
             <hr>
           </div>
         </div>
-
         <div class="row goals">
           <div class="col-12">
             <h3><i class="fas fa-caret-right"></i> Goals (BETA):</h3>
@@ -55,14 +54,14 @@
                 </div>
 
                     <!-- Individual Goal: -->
-                <div v-for="(goal, i) in goals" :key="i" class="goal" :class=" deleted ? 'deleted' : '' " >
+                <div v-for="(goal, i) in goals" :key="i" class="goal">
                   <div class="row">
                     <div class="col-12" style="display: flex; flex-direction: row;">
                       <h4>{{goal.name}}</h4>
-                      <button class="btn edit-goal-btn" :class=" deleted ? 'deleted' : '' " :disabled="deleted ? true : false" @click="goal.editing = !goal.editing">
+                      <button class="btn edit-goal-btn" @click="goal.editing = !goal.editing">
                         <i class="fas fa-pen"></i>
                       </button>
-                      <button class="btn delete-goal-btn" :class=" deleted ? 'deleted' : '' " :disabled="deleted ?  true : false" @click="goal.deleting = true">
+                      <button class="btn delete-goal-btn" @click="goal.deleting = true">
                         <i class="fas fa-trash"></i>
                       </button>
                     </div>
@@ -70,12 +69,12 @@
                   <div class="row">
                     <div class="goal-progress" style="width:100%; padding: 0 1em;">
                       <div class="progress">
-                        <div class="progress-bar t3" :class=" deleted ? 'deleted' : '' " role="progressbar" :style=" `width: ${prog}%`"></div>
+                        <div class="progress-bar t3" :class="goal.deleted ? 'deleted' : '' " role="progressbar" :style=" `width: ${goal.prog}%`"></div>
                       </div>
                       <span><em>$ {{goal.goal_num}}</em></span>
                     </div>
                   </div>
-
+                    <!-- Edit goal modal -->
                   <div v-if="goal.editing" class="row edit-goal">
                     <div class="col-12">
                       <h5>Edit Goal</h5> <hr><br>
@@ -103,7 +102,7 @@
                       </form>
                     </div>
                   </div>
-
+                    <!-- Delete goal modal -->
                   <div v-if="goal.deleting" class="delete-goal-modal">
                     <div class="row">
                       <div class="col-12">
@@ -120,8 +119,6 @@
                     </div>
                   </div>
                 </div>
-
-
               </div>
             </div>
           </div>
@@ -177,7 +174,6 @@
           <h2><i class="fas fa-caret-right"></i> Cycles</h2>
         </div>
         <hr>
-
             <!-- No Saved Cycle default: -->
         <div class="row">
           <div class="col-12">
@@ -324,7 +320,6 @@
         </div>
       </div>
     </div>
-
   </div>
 </template>
 
@@ -379,7 +374,7 @@
         thisObj.email = firebase.auth().currentUser.email
         thisObj.getUserData()
         // console.log("Logged in as:", thisObj.uid)
-        console.log("Logged in as:", firebase.auth().currentUser)
+        // console.log("Logged in as:", firebase.auth().currentUser)
       } else { console.log("No user") }
       // this.getCycles()
       // this.getGoals()
@@ -404,7 +399,6 @@
       getCycles(){
         this.cycles = []
         let thisObj = this
-
         // let cycles = OseeyoFireBase.OseeyoGet("cycles","uid",thisObj.uid)
         // console.log("your cycles", cycles)
         db.collection("cycles").where("uid", '==', thisObj.uid).get().then((querySnapshot) => {
@@ -474,13 +468,17 @@
       },
         // Goal CRUD functions
       getGoals(){
+        this.goals = []
         let thisObj = this
-        thisObj.goals = []
+
         db.collection("goals").where("uid", '==', thisObj.uid).get().then((querySnapshot) => {
           // Add each project to dataset:
           querySnapshot.forEach((doc) => {
             thisObj.goals.push(doc.data())
           })
+        })
+        thisObj.goals.forEach((goal) => {
+          goal.deleting = false
         })
       },
       createGoal(){
@@ -491,40 +489,51 @@
           name: "",
           min: 0,
           prog: 0,
-          goal_num: 0
+          goal_num: 0,
+          editing: false,
+          deleting: false
         }
       },
       progress(goal){
+        let thisObj = this
+        goal.goal_num = Number(goal.goal_num)
+        goal.min = 0
 
-        // goal.goal_num = Number(this.goal.goal_num)
-        // console.log("max", this.goal_num)
-        // console.log("dataset", this.dataset)
-        // console.log("goal", this.goal)
 
-        //Earnings
-        this.dataset.forEach((endpoint) => {
-          this.min += endpoint.earnings.total
-        })
+        // Adds up earnings
+        const totalEarnings = () => {
+          thisObj.cycles.forEach((cycle) => {
+            goal.min += cycle.earnings.total
+          })
+        }
 
-        this.prog = (this.min / this.goal_num) * 100
-        this.goal.prog = this.prog
-        // console.log("progress:", this.prog)
-        OseeyoFireBase.OseeyoUpdate("goals", "id", this.goal.id, this.goal)
+        // Calculates percentage
+        const progressPercentage = () => {
+          goal.prog = (goal.min / goal.goal_num) * 100
+          // console.log("progress:", goal.prog)
+        }
+
+        totalEarnings()
+        progressPercentage()
+
+        OseeyoFireBase.OseeyoUpdate("goals", "id", goal.id, goal)
         // this.updateProg()
       },
       deleteGoal(goal){
         console.log("Deleting:", goal.name)
         let thisObj = this
         thisObj.editing = true
-        db.collection("goals").where('id', '==', goal.id).get().then((querySnapshot) => {
+        db.collection("goals").where('id', '==', goal.id).get()
+          .then((querySnapshot) => {
             querySnapshot.forEach((doc) => {
               doc.ref.delete()
-
             })
           })
-          goal.deleting = false
-          goal.editing = false
-          thisObj.deleted = true
+          .then(() => {
+            thisObj.deleting = false
+            thisObj.goals = false
+          })
+          setTimeout(()=>{thisObj.saveChanges()}, 900)
       },
 
       editObj(obj) {
@@ -539,6 +548,7 @@
       saveChanges(){
         this.saving = "Saved!"
         let thisObj = this
+
       // Calculation Functions:
           // Week Total
         const week_total = (week) => {
@@ -642,8 +652,15 @@
         }
 
         if(!thisObj.cycles) thisObj.getCycles()
+        if(!thisObj.goals) thisObj.getGoals()
 
-      // Actions
+      // Pre-Database Actions
+
+        //Goals:
+        this.goals.forEach((goal) => {
+          this.progress(goal)
+        })
+        // Cycles:
         this.cycles.forEach((cycle) => {
           cycle.week_1_total = week_total(cycle.week_1)
           cycle.week_2_total = week_total(cycle.week_2)
@@ -653,16 +670,16 @@
           cycle.editing = false
         })
 
-        this.goals.forEach((goal) => { this.progress(goal) })
-
-        //  Update data in FireBase:
+      // Update data in FireBase:
           this.cycles.forEach((cycle) => {
             this.sendToFireBase(cycle, "cycles")
             cycle.editing = false
+            cycle.deleting = false
           })
           this.goals.forEach((goal) => {
             this.sendToFireBase(goal, "goals")
             goal.editing = false
+            goal.deleting = false
           })
           if(thisObj.new_cycle && (thisObj.new_cycle.title !== "")){
             OseeyoFireBase.OsseeyoFirePush("cycles", thisObj.new_cycle)
@@ -696,7 +713,6 @@
       },
     },
   }
-
 </script>
 
 <style lang="scss">
