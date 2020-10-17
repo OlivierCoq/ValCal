@@ -68,12 +68,16 @@
         box-shadow: $shadow;
 
         .delete-modal {
-          width: 50%;
-          margin: 0 auto;
-          position: fixed;
-          bottom: 50%;
-          background: white;
-          z-index: 99999;
+            width: 50%;
+            margin: 0 auto;
+            position: fixed;
+            bottom: 50%;
+            background: white;
+            z-index: 99999;
+            min-height: 1em;
+            margin: 1em 0;
+            padding: 3em 1em;
+            box-shadow: $shadow;
 
           .ctr-actions {
             .delete-final-btn,
@@ -83,7 +87,7 @@
               box-shadow: $shadow;
               border-radius: 2em;
               padding: .6em .9em;
-              margin: -0.5em 1em 0 1em;
+              margin: 10px;
               color: white;
             }
 

@@ -107,8 +107,8 @@
                     <div class="row">
                       <div class="col-12">
                         <form class="row">
-                          <label class="col-sm-12 col-md-6 col-form-label"><span>Are you sure you want to delete this Goal? This <strong>cannot</strong> be undone.</span></label>
-                          <div class="col-sm-12 col-md-6">
+                          <label class="col-sm-12 col-md-4 col-form-label"><span>Are you sure you want to delete this Goal? This <strong>cannot</strong> be undone.</span></label>
+                          <div class="col-sm-12 col-md-8">
                             <div class="ctr-actions">
                               <button class="btn delete-final-btn" @click="deleteGoal(goal)">Yes, delete it please.</button>
                               <button class="btn delete-cancel-btn" @click="goal.deleting = false">Nope, nevermind!</button>
@@ -214,7 +214,7 @@
             </div>
 
               <!-- Editing Cycle: -->
-            <div v-if="editing || cycle.editing" class="row edit-cycle">
+            <div v-if="cycle.editing" class="row edit-cycle">
               <div class="col-md-12">
                 <form>
                   <div class="form-group row">
